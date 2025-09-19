@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考勤核心指标与员工表现</title>
+  <!-- 引入layui CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui-src/dist/css/layui.css">
+  <style>
+    body {
+      background-color: #f2f3f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      position: relative;
+    }
+    .title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 40px;
+      height: 2px;
+      background-color: #1E9FFF;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 15px 10px;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      margin-bottom: 15px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .stat-card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: #1E9FFF;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover:before {
+      opacity: 1;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 10px 0;
+      color: #1E9FFF;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover .stat-value {
+      transform: scale(1.05);
+    }
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+    .stat-trend {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .trend-up {
+      color: #f5222d;
+    }
+    .trend-down {
+      color: #52c41a;
+    }
+    .status-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #fff;
+    }
+    .status-normal {
+      background-color: #52c41a;
+    }
+    .status-late {
+      background-color: #faad14;
+    }
+    .status-absent {
+      background-color: #f5222d;
+    }
+    .summary-item {
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+    }
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+    .summary-label {
+      display: inline-block;
+      width: 120px;
+      color: #666;
+    }
+    .filter-bar {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    }
+    .month-select {
+      display: inline-block;
+      width: 200px;
+      margin-right: 15px;
+    }
+    .department-select {
+      display: inline-block;
+      width: 200px;
+      margin-right: 15px;
+    }
+    .export-btn {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .ranking-list {
+      margin-top: 15px;
+    }
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+      transition: all 0.2s ease;
+    }
+    .ranking-item:hover {
+      background-color: #f9f9f9;
+      padding-left: 5px;
+    }
+    .ranking-item:last-child {
+      border-bottom: none;
+    }
+    .ranking-num {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 50%;
+      background-color: #1E9FFF;
+      color: white;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .ranking-num.top1 {
+      background-color: #f5222d;
+    }
+    .ranking-num.top2 {
+      background-color: #fa8c16;
+    }
+    .ranking-num.top3 {
+      background-color: #faad14;
+    }
+    .ranking-info {
+      flex: 1;
+    }
+    .ranking-name {
+      font-weight: 500;
+    }
+    .ranking-department {
+      font-size: 12px;
+      color: #666;
+    }
+    .ranking-value {
+      font-weight: bold;
+      min-width: 80px;
+      text-align: right;
+    }
+    .action-btn {
+      margin-left: 10px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 页面标题 -->
+    <div class="header">
+      <h1 class="layui-h1" style="margin: 0; color: #1E9FFF;">考勤核心指标与员工表现</h1>
+      <div>
+        <button class="layui-btn export-btn" id="exportData">
+          <i class="layui-icon layui-icon-download"></i> 导出数据
+        </button>
+      </div>
+    </div>
+    
+    <!-- 筛选区域 -->
+    <div class="filter-bar">
+      <div class="month-select">
+        <div class="layui-input-inline" style="width: 100%;">
+          <input type="text" class="layui-input" id="monthPicker" placeholder="选择月份">
+        </div>
+    </div>
+    
+    <!-- 部门整体概览 -->
+    <div class="card">
+      <div class="title">部门整体概览</div>
+      <div class="layui-row">
+        <div class="layui-col-md6">
+          <div class="summary-item">
+            <span class="summary-label">统计人员：</span>
+            <span id="currentDepartment">全校</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">统计月份：</span>
+            <span id="currentMonth">2023年10月</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">总数：</span>
+            <span>15000人</span>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="summary-item">
+            <span class="summary-label">工作日总数：</span>
+            <span>22天</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">平均出勤率：</span>
+            <span style="color: #1E9FFF; font-weight: bold;">89.7%</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">较上月变化：</span>
+            <span class="trend-up" style="font-weight: bold;">+2.3%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 核心考勤指标 -->
+    <div class="card">
+      <div class="title">核心考勤指标</div>
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">全勤人数</div>
+            <div class="stat-value">14997</div>
+            <div class="stat-trend trend-up">
+              <i class="layui-icon layui-icon-up"></i> 较上月增加3人
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">迟到总次数</div>
+            <div class="stat-value" style="color: #faad14;">32</div>
+            <div class="stat-trend trend-down">
+              <i class="layui-icon layui-icon-down"></i> 较上月减少8次
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">早退总次数</div>
+            <div class="stat-value" style="color: #fa8c16;">12</div>
+            <div class="stat-trend trend-down">
+              <i class="layui-icon layui-icon-down"></i> 较上月减少5次
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">未打卡总次数</div>
+            <div class="stat-value" style="color: #f5222d;">8</div>
+            <div class="stat-trend trend-up">
+              <i class="layui-icon layui-icon-up"></i> 较上月增加2次
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">请假总天数</div>
+            <div class="stat-value" style="color: #1890ff;">45</div>
+            <div class="stat-trend trend-down">
+              <i class="layui-icon layui-icon-down"></i> 较上月减少12天
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">平均工作时长</div>
+            <div class="stat-value" style="color: #722ed1;">8.5小时</div>
+            <div class="stat-trend trend-up">
+              <i class="layui-icon layui-icon-up"></i> 较上月增加0.3小时
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">全勤率</div>
+            <div class="stat-value" style="color: #52c41a;">53.6%</div>
+            <div class="stat-trend trend-up">
+              <i class="layui-icon layui-icon-up"></i> 较上月增加10.7%
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="stat-card">
+            <div class="stat-label">异常率</div>
+            <div class="stat-value" style="color: #faad14;">8.1%</div>
+            <div class="stat-trend trend-down">
+              <i class="layui-icon layui-icon-down"></i> 较上月减少3.2%
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- 引入layui JS -->
+  <script src="https://cdn.jsdelivr.net/npm/layui-src/dist/layui.js"></script>
+  <script>
+    // 初始化layui模块
+    layui.use(['element', 'layer', 'util', 'laydate', 'form'], function() {
+      var element = layui.element;
+      var layer = layui.layer;
+      var util = layui.util;
+      var laydate = layui.laydate;
+      var form = layui.form;
+      
+      // 初始化月份选择器
+      var now = new Date();
+      var currentYear = now.getFullYear();
+      var currentMonth = now.getMonth() + 1;
+      
+      laydate.render({
+        elem: '#monthPicker'
+        ,type: 'month'
+        ,value: currentYear + '-' + (currentMonth < 10 ? '0' + currentMonth : currentMonth)
+        ,format: 'yyyy-MM'
+        ,done: function(value, date) {
+          if (value) {
+            // 更新当前月份显示
+            document.getElementById('currentMonth').textContent = date.year + '年' + date.month + '月';
+          }
+        }
+      });
+      
+    
+      // 导出数据按钮事件
+      document.getElementById('exportData').addEventListener('click', function() {
+        var loadingIndex = layer.load(2);
+        
+        // 模拟导出过程
+        setTimeout(function() {
+          layer.close(loadingIndex);
+          layer.success('考勤核心数据导出成功！');
+        }, 1500);
+      });
+      
+
+    });
+  </script>
+</body>
+</html>

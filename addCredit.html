@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>消息发布</legend>
+        </fieldset>
+
+        <form class="layui-form" action="">
+				<div class="layui-form-item">
+				    <label class="layui-form-label">发送对象</label>
+				    <div class="layui-input-block">
+				        <input type="radio" name="recvType" value="role" title="按角色" checked>
+				        <input type="radio" name="recvType" value="dept" title="按院系/部门">
+				        <input type="radio" name="recvType" value="post" title="按特定岗位">
+				    </div>
+				</div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">院系/部门</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="url" lay-verify="url" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">通知标题</label>
+				    <div class="layui-input-block">
+				        <input type="text" name="url" lay-verify="url" autocomplete="off" class="layui-input">
+				    </div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">通知正文</label>
+					<div class="layui-input-block">
+						<textarea   name="remark" class="layui-textarea" placeholder="请输入通知信息"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label">复选框</label>
+				    <div class="layui-input-block">
+				        <input type="checkbox" name="like[write]" title="系统内通知" checked="">
+				        <input type="checkbox" name="like[read]" title="邮箱通知" >
+				        <input type="checkbox" name="like[game]" title="短信通知">
+				    </div>
+				</div>
+				
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="demo1">提交发送</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+		</div>
+		</div>
+		<script src="lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+</body>
+</html>

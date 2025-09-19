@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>考勤异常处理-考勤管理系统</title>
+  <!-- 引入 Layui 样式 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
+</head>
+<body>
+<div class="layui-container">
+  <h2 class="layui-title">7.2 考勤异常处理</h2>
+
+  <!-- 管理员/岗位负责人端视图：异常列表 + 核实操作 -->
+  <div class="layui-card">
+    <div class="layui-card-header">管理员/岗位负责人端</div>
+    <div class="layui-card-body">
+      <table class="layui-table" lay-size="sm" lay-filter="exceptionTable">
+        <thead>
+          <tr>
+            <th>学生信息</th>
+            <th>异常日期</th>
+            <th>异常类型</th>
+            <th>异常原因</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 示例数据 -->
+          <tr>
+            <td>李四（2025002）</td>
+            <td>2025-09-14</td>
+            <td>迟到</td>
+            <td>系统识别：打卡时间晚于 09:00</td>
+            <td>
+              <button class="layui-btn layui-btn-xs" lay-event="verify">核实</button>
+            </td>
+          </tr>
+          <tr>
+            <td>王五（2025003）</td>
+            <td>2025-09-13</td>
+            <td>异常打卡</td>
+            <td>系统识别：无打卡记录</td>
+            <td>
+              <button class="layui-btn layui-btn-xs" lay-event="verify">核实</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 学生端视图：异常列表 + 申诉操作 -->
+  <div class="layui-card">
+    <div class="layui-card-header">学生端</div>
+    <div class="layui-card-body">
+      <table class="layui-table" lay-size="sm">
+        <thead>
+          <tr>
+            <th>异常日期</th>
+            <th>异常类型</th>
+            <th>异常原因</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 示例数据 -->
+          <tr>
+            <td>2025-09-14</td>
+            <td>迟到</td>
+            <td>系统识别：打卡时间晚于 09:00</td>
+            <td>
+              <button class="layui-btn layui-btn-xs layui-btn-primary" lay-event="appeal">申诉</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 申诉弹窗（默认隐藏） -->
+  <div id="appealModal" style="display: none;">
+    <form class="layui-form" lay-filter="appealForm">
+      <div class="layui-form-item">
+        <label class="layui-form-label">异常日期</label>
+        <div class="layui-input-block">
+          <input type="text" name="exceptionDate" readonly class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">异常类型</label>
+        <div class="layui-input-block">
+          <input type="text" name="exceptionType" readonly class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">申诉原因</label>
+        <div class="layui-input-block">
+          <textarea name="appealReason" placeholder="请输入申诉原因" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">证明材料</label>
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn" id="uploadProof">
+            <i class="layui-icon"></i>上传证明材料
+          </button>
+          <div id="proofList" class="layui-upload-list" style="margin-top: 10px;"></div>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit lay-filter="submitAppeal">提交申诉</button>
+          <button type="button" class="layui-btn layui-btn-primary" id="closeAppeal">取消</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- 核实弹窗（默认隐藏） -->
+  <div id="verifyModal" style="display: none;">
+    <form class="layui-form" lay-filter="verifyForm">
+      <div class="layui-form-item">
+        <label class="layui-form-label">学生信息</label>
+        <div class="layui-input-block">
+          <input type="text" name="studentInfo" readonly class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">异常日期</label>
+        <div class="layui-input-block">
+          <input type="text" name="verifyDate" readonly class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">异常类型</label>
+        <div class="layui-input-block">
+          <input type="text" name="verifyType" readonly class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">异常原因</label>
+        <div class="layui-input-block">
+          <textarea name="verifyReason" readonly class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">申诉材料</label>
+        <div class="layui-input-block" id="appealMaterials">
+          暂无申诉材料
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">处理结果</label>
+        <div class="layui-input-block">
+          <select name="handleResult">
+            <option value="">请选择处理结果</option>
+            <option value="normal">改为正常</option>
+            <option value="maintain">维持原状态</option>
+          </select>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">处理意见</label>
+        <div class="layui-input-block">
+          <textarea name="handleOpinion" placeholder="请输入处理意见" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit lay-filter="submitVerify">提交处理</button>
+          <button type="button" class="layui-btn layui-btn-primary" id="closeVerify">取消</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 引入 Layui 核心 JS -->
+<script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+<script>
+layui.use(['form', 'layer', 'upload'], function(){
+  var form = layui.form,
+      layer = layui.layer,
+      upload = layui.upload;
+
+  // ---------- 学生端：申诉功能 ----------
+  // 申诉按钮点击事件
+  document.querySelector('button[lay-event="appeal"]').onclick = function(){
+    var tr = this.closest('tr');
+    var date = tr.cells[0].innerText;
+    var type = tr.cells[1].innerText;
+
+    // 填充申诉表单默认值
+    form.val('appealForm', {
+      'exceptionDate': date,
+      'exceptionType': type
+    });
+
+    // 打开申诉弹窗
+    layer.open({
+      type: 1,
+      title: '考勤异常申诉',
+      content: document.getElementById('appealModal'),
+      area: ['600px', '450px']
+    });
+  };
+
+  // 关闭申诉弹窗
+  document.getElementById('closeAppeal').onclick = function(){
+    layer.closeAll();
+  };
+
+  // 提交申诉
+  form.on('submit(submitAppeal)', function(data){
+    console.log('申诉数据：', data.field); // 可提交到后端接口
+    layer.msg('申诉提交成功，等待核实', {icon: 1});
+    layer.closeAll();
+    return false;
+  });
+
+  // 证明材料上传（示例，需对接后端上传接口）
+  upload.render({
+    elem: '#uploadProof',
+    url: '/upload', // 实际后端上传接口地址
+    accept: 'file', // 允许上传文件
+    done: function(res){
+      // 上传成功回调（res 为后端返回数据）
+      var proofList = document.getElementById('proofList');
+      proofList.innerHTML += `<div class="layui-upload-file">${res.filename}</div>`;
+    }
+  });
+
+  // ---------- 管理员/负责人端：核实功能 ----------
+  // 核实按钮点击事件（批量绑定）
+  document.querySelectorAll('button[lay-event="verify"]').forEach(function(btn){
+    btn.onclick = function(){
+      var tr = this.closest('tr');
+      var student = tr.cells[0].innerText;
+      var date = tr.cells[1].innerText;
+      var type = tr.cells[2].innerText;
+      var reason = tr.cells[3].innerText;
+
+      // 填充核实表单
+      form.val('verifyForm', {
+        'studentInfo': student,
+        'verifyDate': date,
+        'verifyType': type,
+        'verifyReason': reason
+      });
+
+      // 打开核实弹窗
+      layer.open({
+        type: 1,
+        title: '考勤异常核实',
+        content: document.getElementById('verifyModal'),
+        area: ['600px', '550px']
+      });
+    };
+  });
+
+  // 关闭核实弹窗
+  document.getElementById('closeVerify').onclick = function(){
+    layer.closeAll();
+  };
+
+  // 提交核实处理
+  form.on('submit(submitVerify)', function(data){
+    console.log('核实处理数据：', data.field); // 可提交到后端接口
+    layer.msg('处理提交成功', {icon: 1});
+    layer.closeAll();
+    return false;
+  });
+});
+</script>
+</body>
+</html>

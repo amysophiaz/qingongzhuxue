@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="css/public.css" media="all">
+</head>
+<body>
+	<div class="layui-card-header">
+	        <h2 class="layui-card-title">反馈进度查询</h2>
+	      </div>
+		  <br>
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label required">反馈类型</label>
+			<div class="layui-input-block">
+				<select lay-verify="required">
+					<option value="1">岗位问题</option>
+					<option value="2">工资问题</option>
+					<option value="3">其他问题</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">全部状态</label>
+			<div class="layui-input-block">
+				<select lay-verify="required">
+					<option value="1">待处理</option>
+					<option value="2">处理中</option>
+					<option value="3">已解决</option>
+					<option value="4">已驳回</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+		    <label class="layui-form-label">关键词</label>
+		    <div class="layui-input-inline">
+		        <input type="text" name="classify" autocomplete="off" class="layui-input">
+		    </div>
+		</div>
+		<div class="layui-inline">
+		    <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+		</div>
+		</div>
+		<br>
+		<br>
+		<br>
+		<i class="layui-icon layui-icon-notice" style="color: #009688;"></i>
+		<div class="layui-panel">
+		  <div style="padding: 32px;">关于图书馆管理员岗位工资计算有误的反馈<br>
+		  <span class="status-tag status-processing">处理中</span>
+		  2024-10-01<br>
+		  <p>
+		    <strong>反馈编号：</strong>FB20240916001<br>
+		    <strong>提交时间：</strong>2024-09-16 09:32<br>
+		    <strong>反馈类型：</strong>工资问题<br>
+		    <strong>简要描述：</strong>8月份图书馆管理员岗位工资计算有误，实际工作时长与系统记录不符，少计算了5小时...
+		  </p>
+		<button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-feedback" data-id="FB20240916001">查看详情</button>
+	    <button class="layui-btn layui-btn-normal layui-btn-sm action-btn remind-handler" data-id="FB20240916001">催办</button>
+	    <button class="layui-btn layui-btn-warm layui-btn-sm action-btn add-material" data-id="FB20240916001">补充材料</button>
+		  </div>
+		</div>
+		
+		<i class="layui-icon layui-icon-notice" style="color: #009688;"></i>
+		<div class="layui-panel">
+		  <div style="padding: 32px;">关于图书馆工作环境改善的建议<br>
+		  <span class="status-tag status-processing">已解决</span>
+		  2024-10-01<br>
+		  <p>
+		    <strong>反馈编号：</strong>FB20240905002<br>
+		    <strong>提交时间：</strong>2024-09-05 15:17<br>
+		    <strong>反馈类型：</strong>工作环境<br>
+		    <strong>简要描述：</strong>图书馆三楼阅览区空调制冷效果差，夏季工作环境温度过高，建议检修或更换...
+		  </p>
+		<button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-feedback" data-id="FB20240905002">查看详情</button>
+		<button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-result" data-id="FB20240905002">查看处理结果</button>
+		  </div>
+		</div>
+	        
+	    <i class="layui-icon layui-icon-notice" style="color: #009688;"></i>
+	    <div class="layui-panel">
+	      <div style="padding: 32px;">申请调整工作时间段的请求<br>
+	      <span class="status-tag status-processing">待处理</span>
+	      2024-10-01<br>
+	      <p>
+	        <strong>反馈编号：</strong>FB20240917003<br>
+	        <strong>提交时间：</strong>2024-09-17 10:05<br>
+	        <strong>反馈类型：</strong>岗位问题<br>
+	        <strong>简要描述：</strong>因课程表调整，周二下午有课程冲突，申请将周二工作时间调整为晚上19:00-21:00...
+	      </p>
+	    <button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-feedback" data-id="FB20240905002">查看详情</button>
+	    <button class="layui-btn layui-btn-danger layui-btn-sm action-btn cancel-feedback" data-id="FB20240917003">取消反馈</button>
+	      </div>
+	    </div>
+	    
+		<i class="layui-icon layui-icon-notice" style="color: #009688;"></i>
+		<div class="layui-panel">
+		  <div style="padding: 32px;">关于增加勤工助学岗位补贴的建议<br>
+		  <span class="status-tag status-processing">已驳回</span>
+		  2024-10-01<br>
+		  <p>
+		    <strong>反馈编号：</strong>FB20240828001<br>
+		      <strong>提交时间：</strong>2024-08-28 16:42<br>
+		      <strong>反馈类型：</strong>其他问题<br>
+		      <strong>简要描述：</strong>当前勤工助学岗位补贴标准已两年未调整，建议根据物价水平适当提高补贴标准...
+		    </p>
+		<button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-feedback" data-id="FB20240905002">查看详情</button>
+	    <button class="layui-btn layui-btn-primary layui-btn-sm action-btn view-reason" data-id="FB20240828001">查看驳回原因</button>
+		  </div>
+		</div>
+	         <!-- 分页 -->
+	         <div class="layui-box layui-laypage layui-laypage-default" style="text-align: center; margin-top: 30px;">
+	           <a href="javascript:;" class="layui-laypage-prev layui-disabled">上一页</a>
+	           <span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>1</em></span>
+	           <a href="javascript:;">2</a>
+	           <a href="javascript:;">3</a>
+	           <span class="layui-laypage-spr">…</span>
+	           <a href="javascript:;">8</a>
+	           <a href="javascript:;" class="layui-laypage-next">下一页</a>
+	           <span class="layui-laypage-count">共 8 页</span>
+	         </div>
+	       </div>
+	     </div>
+	   </div>
+	 
+	   
+	   <script src="lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+	 </body>
+	 </html>
